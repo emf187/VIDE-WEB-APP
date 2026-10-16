@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { DASH } from "@/lib/format";
 import { cx } from "./cx";
 
 interface TileProps {
@@ -38,7 +39,7 @@ export function Tile({ label, value, unit, sub, state, size = "lg", pulseKey }: 
         <span key={tick} className={cx("inline-block", tick > 0 && "animate-tick")}>
           {value}
         </span>
-        {unit && <span className="ml-1 text-[11px] font-normal text-dim">{unit}</span>}
+        {unit && value !== DASH && <span className="ml-1 text-[11px] font-normal text-dim">{unit}</span>}
       </div>
       {sub !== undefined && <div className="mt-1 text-[10px] text-dim2">{sub}</div>}
     </div>

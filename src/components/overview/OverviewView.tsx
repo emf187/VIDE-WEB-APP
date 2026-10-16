@@ -105,7 +105,7 @@ export function OverviewView() {
         <ConnectionPanel />
       </Card>
 
-      {!snapshot ? (
+      {!snapshot || (snapshot.error && machines.length === 0) ? (
         <EmptyState>{status === "offline" ? "Backend unreachable — check the URL above or switch on mock data." : "Waiting for connection…"}</EmptyState>
       ) : machines.length === 0 ? (
         <EmptyState>Connected, but no machines have sent data yet. POST a reading to /api/readings.</EmptyState>

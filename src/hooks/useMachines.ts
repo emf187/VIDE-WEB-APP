@@ -50,7 +50,7 @@ export function useMachines(pollMs: number | null = null) {
   usePoll(reload, pollMs, { key: pollKey });
 
   const current = result.api === api;
-  const backend = current ? result.list : [];
+  const backend = useMemo(() => (current ? result.list : []), [current, result.list]);
   const machines = useMemo(() => mergeLocalMachines(backend, profiles), [backend, profiles]);
 
   return {
