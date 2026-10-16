@@ -1,0 +1,224 @@
+/*
+ * VIDE CORTEX — design system.
+ *
+ * Every colour in the app comes from the tokens below. Components use them through
+ * Tailwind classes (bg-panel, text-accent, border-line …) — never hardcode a hex in a component.
+ * Canvas charts read the --chart-* tokens at draw time (see src/components/charts/palette.ts).
+ *
+ * Character rules (do not "modernise"): JetBrains Mono everywhere, orange on charcoal,
+ * 2px hard borders, border-radius 0, no shadows, dashed dividers, steppy animations.
+ */
+@import "tailwindcss";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
+/* ---------- Theme tokens: dark (default) ---------- */
+:root,
+[data-theme="dark"] {
+  --bg: #0b0c10;
+  --panel: #131519;
+  --panel-hi: #1a1c22; /* hovered / selected rows, toast, user chat bubble */
+  --line: #24262c;
+  --line-lit: #3a3d46;
+  --ink: #e7e8ec;
+  --dim: #71757f;
+  --dim2: #4b4e57;
+
+  --grad1: #ff3d1a;
+  --grad2: #ff9d1a;
+  --accent: #ff7a1a;
+  --accent-hi: #ff8e3c;
+  --on-accent: #0b0c10;
+
+  --ok: #3ddc84;
+  --warn: #ffd020;
+  --high: #ffb020;
+  --crit: #ff5252;
+  --edge: #3ddc84;
+  --cloud: #6aa8ff;
+
+  /* tinted backgrounds + borders for badges, pills, flags */
+  --ok-bg: #0f2417;
+  --ok-line: #1c4a30;
+  --warn-bg: #221d0b;
+  --warn-line: #4a3f1c;
+  --crit-bg: #2a1414;
+  --crit-line: #4a1c1c;
+  --cloud-bg: #101623;
+  --cloud-line: #26406a;
+
+  --grid: rgba(255, 255, 255, 0.015); /* 4px pixel-grid texture on body */
+
+  --chart-bg: var(--bg);
+  --chart-grid: var(--line);
+  --chart-text: var(--dim);
+  --chart-muted: var(--dim2);
+  --chart-temp: #ff7a1a;
+  --chart-vib: #ff5252;
+  --chart-power: #3ddc84;
+  --chart-load: #6aa8ff;
+  --chart-sweep: rgba(255, 122, 26, 0.2);
+  --chart-sweep-0: rgba(255, 122, 26, 0);
+
+  color-scheme: dark;
+}
+
+/* ---------- Theme tokens: light ---------- */
+[data-theme="light"] {
+  --bg: #f2f3f5;
+  --panel: #ffffff;
+  --panel-hi: #eceef1;
+  --line: #d8dbe0;
+  --line-lit: #b9bec7;
+  --ink: #16181d;
+  --dim: #5b606b;
+  --dim2: #8a8f9a;
+
+  --accent: #e85d04;
+  --accent-hi: #f26d14;
+  --on-accent: #0b0c10;
+
+  --ok: #0d7a3f;
+  --warn: #8a6d00;
+  --high: #b25e00;
+  --crit: #d00000;
+  --edge: #0d7a3f;
+  --cloud: #2f5fb3;
+
+  --ok-bg: #e3f4ea;
+  --ok-line: #9fd3b3;
+  --warn-bg: #fbf3d6;
+  --warn-line: #d9c37a;
+  --crit-bg: #fbe4e4;
+  --crit-line: #e6a3a3;
+  --cloud-bg: #e8eefa;
+  --cloud-line: #a9bde3;
+
+  --grid: rgba(0, 0, 0, 0.03);
+
+  --chart-temp: #e85d04;
+  --chart-vib: #d00000;
+  --chart-power: #0d7a3f;
+  --chart-load: #2f5fb3;
+  --chart-sweep: rgba(232, 93, 4, 0.15);
+  --chart-sweep-0: rgba(232, 93, 4, 0);
+
+  color-scheme: light;
+}
+
+/* ---------- Tailwind mapping ---------- */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-hi: var(--panel-hi);
+  --color-line: var(--line);
+  --color-line-lit: var(--line-lit);
+  --color-ink: var(--ink);
+  --color-dim: var(--dim);
+  --color-dim2: var(--dim2);
+  --color-accent: var(--accent);
+  --color-accent-hi: var(--accent-hi);
+  --color-on-accent: var(--on-accent);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-high: var(--high);
+  --color-crit: var(--crit);
+  --color-edge: var(--edge);
+  --color-cloud: var(--cloud);
+  --color-ok-bg: var(--ok-bg);
+  --color-ok-line: var(--ok-line);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-line: var(--warn-line);
+  --color-crit-bg: var(--crit-bg);
+  --color-crit-line: var(--crit-line);
+  --color-cloud-bg: var(--cloud-bg);
+  --color-cloud-line: var(--cloud-line);
+
+  --font-mono: "JetBrains Mono", Consolas, monospace;
+  --font-sans: "JetBrains Mono", Consolas, monospace;
+}
+
+@theme {
+  /* Hard edges only: no rounded-* or shadow-* utilities exist in this project. */
+  --radius-*: initial;
+  --shadow-*: initial;
+
+  /* Tile value flash when a number changes. */
+  --animate-tick: tick 0.6s steps(4);
+  /* LIVE indicator. */
+  --animate-blink: blink 1s steps(2) infinite;
+
+  @keyframes tick {
+    0% { color: var(--accent); }
+    100% { color: var(--ink); }
+  }
+  @keyframes blink {
+    50% { opacity: 0.25; }
+  }
+}
+
+/* Small square pinned to a card's top-left corner — part of the product's identity. */
+@utility notch {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 6px;
+    height: 6px;
+    background: var(--line-lit);
+  }
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-radius: 0;
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    font-family: var(--font-mono);
+    color: var(--ink);
+    background-color: var(--bg);
+    background-image:
+      repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 4px);
+    image-rendering: pixelated;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* ---------- Print (Predictions report) ---------- */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+}
