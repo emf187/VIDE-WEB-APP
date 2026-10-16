@@ -30,7 +30,7 @@ export function mergeLocalMachines(backend: Machine[], profiles: Record<string, 
  * (operators keep seeing their fleet while the backend blips).
  */
 export function useMachines(pollMs: number | null = null) {
-  const { api } = useApi();
+  const { api, status } = useApi();
   const [profiles] = useLocalStore(STORAGE_KEYS.profiles);
   // Tag results with the api they came from, so switching source never shows the old fleet.
   const [result, setResult] = useState<{ api: VideApi | null; list: Machine[]; error: string | null }>({ api: null, list: [], error: null });
@@ -44,7 +44,10 @@ export function useMachines(pollMs: number | null = null) {
     }));
   }, [api]);
 
-  usePoll(reload, pollMs, { key: api });
+  // Re-fetch when the source changes or the backend comes back online.
+  const isLive = status === "live";
+  const pollKey = useMemo(() => ({ api, isLive }), [api, isLive]);
+  usePoll(reload, pollMs, { key: pollKey });
 
   const current = result.api === api;
   const backend = current ? result.list : [];

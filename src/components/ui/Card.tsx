@@ -3,7 +3,8 @@ import { cx } from "./cx";
 
 /** Tiny uppercase spaced-out label that sits above every card's content. */
 export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cx("mb-2.5 text-[9px] tracking-[2px] text-dim2 uppercase", className)}>{children}</div>;
+  // Not text-transformed: labels are written in caps, but embedded machine names keep their case.
+  return <div className={cx("mb-2.5 text-[9px] tracking-[2px] text-dim2", className)}>{children}</div>;
 }
 
 /** Small bordered tag inside an eyebrow, e.g. "ON-PREM / LOW LATENCY". */
