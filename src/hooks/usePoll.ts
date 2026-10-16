@@ -5,7 +5,8 @@ import { useEffect, useEffectEvent } from "react";
 /**
  * Run `task` now and then every `ms` milliseconds.
  *  - `ms = null` runs once (and again whenever `key` changes).
- *  - Skips ticks while the tab is hidden; runs immediately when it becomes visible again.
+ *  - Always runs once on start; after that skips ticks while the tab is hidden and runs
+ *    immediately when it becomes visible again.
  *  - Waits for the previous run to finish before scheduling the next (no request pile-up
  *    on the single-worker SQLite backend).
  *  - Changing `key` (e.g. the selected machine) restarts the loop.
@@ -19,9 +20,13 @@ export function usePoll(task: () => Promise<unknown> | void, ms: number | null, 
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
 
+    let first = true;
     const tick = async () => {
       if (cancelled) return;
-      if (!document.hidden) {
+      // The first run always happens (a page opened in a background tab must still load);
+      // repeat ticks are skipped while hidden.
+      if (first || !document.hidden) {
+        first = false;
         try {
           await run();
         } catch (err) {
