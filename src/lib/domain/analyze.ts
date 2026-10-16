@@ -1,5 +1,31 @@
 import { ANALYZE_DEFAULTS } from "@/lib/constants";
-import type { AnalyzeRequest, MachineProfile, Reading } from "@/lib/types";
+import type { AnalyzeRequest, AnalyzeResponse, MachineProfile, Reading, Urgency } from "@/lib/types";
+import { faultOf } from "./messages";
+import { maxUrgency } from "./status";
+
+export interface EdgeCloudFusion {
+  urgency: Urgency;
+  edgeFault: string | null;
+  cloudFault: string | null;
+  /** null until both have run. */
+  match: boolean | null;
+}
+
+/**
+ * Diagnostics "AI verdict": the higher urgency of edge and cloud wins.
+ * Note: today both call the same rules + ML on the backend, so faults usually MATCH —
+ * the cloud run only adds the LLM narrative.
+ */
+export function fuseEdgeCloud(edge: AnalyzeResponse | null, cloud: AnalyzeResponse | null): EdgeCloudFusion {
+  const edgeFault = faultOf(edge);
+  const cloudFault = faultOf(cloud);
+  return {
+    urgency: maxUrgency(edge?.fused_diagnosis.overall_urgency ?? "none", cloud?.fused_diagnosis.overall_urgency ?? "none"),
+    edgeFault,
+    cloudFault,
+    match: edge && cloud ? edgeFault === cloudFault : null,
+  };
+}
 
 /**
  * Build the /diagnostics/analyze body from a reading + the machine's profile.
